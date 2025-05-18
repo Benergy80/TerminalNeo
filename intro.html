@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHILAB&MAXCNC Intro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0a0a;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .intro-sequence {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Change to left alignment */
+        }
+        
+        .cube {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            position: relative;
+            transform-style: preserve-3d;
+            margin-bottom: 20px; /* Create 20px buffer */
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            /* Animation will be applied via JavaScript for one-time rotation */
+        }
+        
+        @keyframes cubeRotateFloat {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.03); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        
+        .cube::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 45%, rgba(255,255,255,0.8) 50%, transparent 55%);
+            background-size: 300% 300%;
+            animation: shine 3s ease-in-out infinite;
+        }
+        
+        /* Remove underlines from all links */
+        a {
+            text-decoration: none;
+        }
+        
+        .logo-text {
+            color: white;
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5rem;
+            position: relative;
+            opacity: 0;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Use CSS content for the subtext */
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -2rem;
+            left: 0;
+            width: 100%;
+            font-size: 0.8rem;
+            letter-spacing: 0.2rem;
+            font-weight: 700;
+            opacity: 0.7;
+        }
+        
+        /* Custom subtext container to ensure NEXT-GEN stays together */
+        .subtext-container {
+            position: absolute;
+            bottom: -2rem;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            opacity: 0.7;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .grid-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+        }
+        
+        @keyframes cubeFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+        
+        /* Floating particles that were in the original version */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+        
+        @keyframes floatParticle {
+            to { transform: translateY(-100vh) translateX(-50vh); }
+        }
+        
+        .loading-bar {
+            position: absolute;
+            bottom: 20%;
+            width: 0;
+            height: 3px;
+            background: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            transition: width 0.3s ease;
+        }
+        
+        .social-icons {
+            position: absolute;
+            bottom: 10%;
+            display: flex;
+            gap: 20px;
+            opacity: 0;
+        }
+        
+        .social-icon {
+            color: white;
+            font-size: 1.5rem;
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        /* Twitter Animation */
+        .fa-twitter {
+            animation: pulseBlue 2s infinite alternate;
+            background: rgba(29, 161, 242, 0.2);
+            padding: 15px;
+            border-radius: 50%;
+        }
+        
+        /* Instagram Animation */
+        .fa-instagram {
+            animation: pulseInstagram 2s infinite alternate 0.2s;
+            background: rgba(193, 53, 132, 0.2);
+            padding: 15px;
+            border-radius: 50%;
+        }
+        
+        /* Facebook Animation */
+        .fa-facebook {
+            animation: pulseFacebook 2s infinite alternate 0.4s;
+            background: rgba(66, 103, 178, 0.2);
+            padding: 15px;
+            border-radius: 50%;
+        }
+        
+        @keyframes pulseBlue {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(29, 161, 242, 0.7);
+            }
+            100% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(29, 161, 242, 0);
+            }
+        }
+        
+        @keyframes pulseInstagram {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(193, 53, 132, 0.7);
+            }
+            100% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(193, 53, 132, 0);
+            }
+        }
+        
+        @keyframes pulseFacebook {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(66, 103, 178, 0.7);
+            }
+            100% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(66, 103, 178, 0);
+            }
+        }
+        
+        .social-icon i {
+            transition: transform 0.3s ease;
+        }
+        
+        .social-icon:hover i {
+            transform: scale(1.2);
+        }
+        
+        /* Sparkle effect for hover */
+        .social-icon::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: rotate 4s linear infinite;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .social-icon:hover::after {
+            opacity: 1;
+        }
+        
+        .fa-twitter:hover::after {
+            border-color: rgba(29, 161, 242, 0.5);
+        }
+        
+        .fa-instagram:hover::after {
+            border-color: rgba(193, 53, 132, 0.5);
+        }
+        
+        .fa-facebook:hover::after {
+            border-color: rgba(66, 103, 178, 0.5);
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    <canvas id="particleCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></canvas>
+    
+    <div class="container">
+        <div class="intro-sequence">
+            <a href="https://benergy80.github.io/TerminalNeo/home.html" style="display: block; text-decoration: none;">
+                <div class="cube" id="cube"></div>
+            </a>
+            <a href="https://benergy80.github.io/TerminalNeo/home.html" style="display: block; text-decoration: none;">
+                <div class="logo-text" id="logoText">CHILAB + MAXCNC</div>
+            </a>
+            <div class="loading-bar" id="loadingBar"></div>
+            <div class="social-icons" id="socialIcons">
+                <a href="https://twitter.com/chilabstudio" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.instagram.com/chilabstudio" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/chilabstudio" class="social-icon"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize interactive network canvas
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas to full window size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                initializeNodes(); // Recreate the network on resize
+            });
+            
+            // Apply one-time rotation animation to the cube
+            setTimeout(() => {
+                const cube = document.getElementById('cube');
+                // Start the one-time rotation animation
+                cube.style.animation = 'cubeRotateFloat 3s ease-in-out forwards';
+                
+                // After animation completes, keep it static in the final position
+                setTimeout(() => {
+                    cube.style.animation = 'none';
+                }, 3000); // Match the animation duration (3s)
+            }, 1000);
+            
+            // Mouse position tracking
+            let mouseX = canvas.width / 2;
+            let mouseY = canvas.height / 2;
+            let mouseRadius = 200; // Influence radius for mouse
+            
+            // Update mouse position on move
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            // Global drift variables
+            let globalPhaseX = 0;
+            let globalPhaseY = 0;
+            const globalDriftSpeed = 0.05; // Slow global movement
+            
+            // Node class for network points with diagonal drift
+            class Node {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.baseX = x; // Original position to return to
+                    this.baseY = y;
+                    this.size = Math.random() * 2 + 1; // Smaller nodes
+                    this.speed = Math.random() * 0.3 + 0.1; // Slower movement
+                    
+                    // Slight random movement
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.moveRadius = Math.random() * 12 + 3; // Small movement radius
+                    
+                    // Add some variety to how nodes respond to global drift
+                    this.driftFactor = Math.random() * 0.5 + 0.5; // 0.5 to 1.0
+                    
+                    // Add diagonal drift velocity - SLOWED DOWN BY 50%
+                    this.driftVelocityX = (-0.1 - Math.random() * 0.3) * 0.5; // Slower left drift
+                    this.driftVelocityY = (-0.15 - Math.random() * 0.35) * 0.5; // Slower upward drift
+                    
+                    // Track if node is outside bounds to reset it
+                    this.isOutOfBounds = false;
+                    
+                    // Add a small amount of randomness to size for visual variety
+                    this.originalSize = this.size;
+                    
+                    // Add slight color variation for visual interest
+                    this.brightness = 0.3 + Math.random() * 0.2; // Base brightness between 0.3-0.5
+                    this.color = `rgba(255, 255, 255, ${this.brightness})`;
+                }
+                
+                update() {
+                    // Apply global drift to base position
+                    const driftX = Math.sin(globalPhaseX) * 30 * this.driftFactor;
+                    const driftY = Math.cos(globalPhaseY) * 30 * this.driftFactor;
+                    
+                    // Gentle float around base position
+                    const floatX = Math.cos(this.angle) * this.moveRadius;
+                    const floatY = Math.sin(this.angle) * this.moveRadius;
+                    
+                    // Apply continuous diagonal drift (particle-like motion)
+                    this.baseX += this.driftVelocityX;
+                    this.baseY += this.driftVelocityY;
+                    
+                    this.x = this.baseX + floatX + driftX;
+                    this.y = this.baseY + floatY + driftY;
+                    
+                    // Slowly change angle for organic movement
+                    this.angle += this.speed * 0.008; // Slower individual movement
+                    
+                    // Mouse interaction - ATTRACT nodes toward cursor (instead of pushing away)
+                    const dx = mouseX - this.x;
+                    const dy = mouseY - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Apply attraction force if within influence radius
+                    if (distance < mouseRadius) {
+                        const force = (mouseRadius - distance) / mouseRadius;
+                        const angle = Math.atan2(dy, dx);
+                        
+                        // Pull toward mouse (attraction)
+                        this.x += Math.cos(angle) * force * 5;
+                        this.y += Math.sin(angle) * force * 5;
+                    }
+                    
+                    // Apply node-to-node repulsion (keep nodes dispersed when not near mouse)
+                    this.applyRepulsion();
+                    
+                    // Check if node has moved out of bounds
+                    if (this.x < -50 || this.x > canvas.width + 50 || 
+                        this.y < -50 || this.y > canvas.height + 50) {
+                        this.isOutOfBounds = true;
+                    }
+                }
+                
+                // Add method to handle repulsion between nodes
+                applyRepulsion() {
+                    // Increased repulsion parameters
+                    const repulsionRadius = 150; // Even larger distance for repulsion
+                    const repulsionStrength = 1.2; // Much stronger repulsion
+                    
+                    // Check distance to mouse - reduce repulsion when near mouse
+                    const distToMouse = Math.sqrt((this.x - mouseX) ** 2 + (this.y - mouseY) ** 2);
+                    const mouseProximityFactor = Math.min(1, distToMouse / (mouseRadius * 1.5));
+                    
+                    // Apply stronger repulsion when further from mouse
+                    // This ensures nodes stay well-separated during normal flow
+                    const effectiveRepulsionStrength = repulsionStrength * (0.3 + 0.7 * mouseProximityFactor);
+                    
+                    // Only apply repulsion when not strongly influenced by mouse
+                    if (mouseProximityFactor > 0.3) {
+                        // Optimization: Only check against nearby nodes
+                        // This helps prevent n² performance issues with many nodes
+                        const checkRadius = repulsionRadius * 1.5; // Check a bit further than repulsion radius
+                        
+                        for (let i = 0; i < nodes.length; i++) {
+                            // Skip self
+                            if (nodes[i] === this) continue;
+                            
+                            // Quick distance check (manhattan distance) before doing expensive sqrt
+                            const approxDx = Math.abs(this.x - nodes[i].x);
+                            const approxDy = Math.abs(this.y - nodes[i].y);
+                            
+                            if (approxDx > checkRadius || approxDy > checkRadius) continue;
+                            
+                            // Calculate exact distance
+                            const dx = this.x - nodes[i].x;
+                            const dy = this.y - nodes[i].y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            // Apply repulsion if nodes are too close
+                            if (distance > 0 && distance < repulsionRadius) {
+                                // Stronger repulsion for very close nodes (inverse cubic falloff for more aggressive repulsion)
+                                const force = Math.pow((repulsionRadius - distance) / repulsionRadius, 2);
+                                const angle = Math.atan2(dy, dx);
+                                const repulsionForce = force * effectiveRepulsionStrength;
+                                
+                                // Push away from other node
+                                this.x += Math.cos(angle) * repulsionForce;
+                                this.y += Math.sin(angle) * repulsionForce;
+                            }
+                        }
+                    }
+                }
+                
+            // Reset node position when it goes off-screen
+                reset() {
+                    // Reset to a new position on the opposite side (diagonally)
+                    if (this.driftVelocityX < 0) {
+                        // If moving left, reset to right side
+                        this.baseX = canvas.width + 50 + Math.random() * 100;
+                    } else {
+                        // If moving right, reset to left side
+                        this.baseX = -50 - Math.random() * 100;
+                    }
+                    
+                    if (this.driftVelocityY < 0) {
+                        // If moving up, reset to bottom
+                        this.baseY = canvas.height + 50 + Math.random() * 100;
+                    } else {
+                        // If moving down, reset to top
+                        this.baseY = -50 - Math.random() * 100;
+                    }
+                    
+                    // Ensure nodes re-enter at different positions for better distribution
+                    // Add extra randomization to prevent clumping when re-entering
+                    this.baseX += Math.random() * 200 - 100;
+                    this.baseY += Math.random() * 200 - 100;
+                    
+                    // Update current position
+                    this.x = this.baseX;
+                    this.y = this.baseY;
+                    this.isOutOfBounds = false;
+                }
+                
+                draw() {
+                    // Calculate distance to mouse for glow effect
+                    const distToMouse = Math.sqrt((this.x - mouseX) ** 2 + (this.y - mouseY) ** 2);
+                    const isNearMouse = distToMouse < mouseRadius;
+                    
+                    // Adjust size and brightness based on mouse proximity
+                    let currentSize = this.originalSize;
+                    let currentBrightness = this.brightness;
+                    
+                    if (isNearMouse) {
+                        // Scale size and brightness based on mouse proximity
+                        const mouseProximityFactor = 1 - distToMouse / mouseRadius;
+                        currentSize += mouseProximityFactor * 2; // Grow up to 2px larger
+                        currentBrightness += mouseProximityFactor * 0.5; // Increase brightness
+                    }
+                    
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, currentSize, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${currentBrightness})`;
+                    ctx.fill();
+                }
+            }
+            
+            const nodes = [];
+            const nodeCount = 80; // Number of nodes for good performance
+            const connectionDistance = 150; // Base distance threshold for connecting nodes
+            
+            // Initialize nodes in a grid-like pattern with some randomness
+            function initializeNodes() {
+                nodes.length = 0; // Clear existing nodes
+                
+                // Create a more dispersed distribution of nodes
+                for (let i = 0; i < nodeCount; i++) {
+                    // Random position across entire canvas
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    nodes.push(new Node(x, y));
+                }
+                
+                // Apply initial repulsion to ensure nodes don't start too clustered
+                for (let iteration = 0; iteration < 5; iteration++) {
+                    nodes.forEach(node => {
+                        node.applyRepulsion();
+                    });
+                }
+            }
+            
+            // Initialize the network
+            initializeNodes();
+            
+            // Function to draw connections between nodes with enhanced mouse effects
+            function drawConnections() {
+                // Adaptive connection distance - changes based on node density
+                let adaptiveConnectionDistance = connectionDistance;
+                
+                // Determine additional connection distance near mouse for dynamic linking
+                const mouseConnectionBoost = 150; // Extra connection distance near mouse
+                
+                // Regular connections
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        // Quick distance approximation first (manhattan distance)
+                        const approxDx = Math.abs(nodes[i].x - nodes[j].x);
+                        const approxDy = Math.abs(nodes[i].y - nodes[j].y);
+                        
+                        // Skip if definitely too far to connect (optimization)
+                        const maxPossibleConnectionDist = adaptiveConnectionDistance + mouseConnectionBoost;
+                        if (approxDx > maxPossibleConnectionDist && approxDy > maxPossibleConnectionDist) continue;
+                        
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // Calculate distances to mouse for both nodes
+                        const distToMouseI = Math.sqrt((nodes[i].x - mouseX) ** 2 + (nodes[i].y - mouseY) ** 2);
+                        const distToMouseJ = Math.sqrt((nodes[j].x - mouseX) ** 2 + (nodes[j].y - mouseY) ** 2);
+                        
+                        // Check if either node is close to mouse
+                        const isNearMouse = (distToMouseI < mouseRadius * 1.2 || distToMouseJ < mouseRadius * 1.2);
+                        
+                        // Calculate dynamic connection distance based on mouse proximity
+                        let dynamicConnectionDistance = adaptiveConnectionDistance;
+                        
+                        // Increase connection distance when near mouse
+                        if (isNearMouse) {
+                            // Calculate how close the closer node is to the mouse (as a factor from 0-1)
+                            const mouseProximityFactor = 1 - Math.min(distToMouseI, distToMouseJ) / (mouseRadius * 1.2);
+                            // Add extra connection distance proportional to proximity
+                            dynamicConnectionDistance += mouseConnectionBoost * mouseProximityFactor;
+                        } else {
+                            // For nodes far from mouse, use a shorter connection distance
+                            // This ensures the network stays more dispersed when not near the mouse
+                            dynamicConnectionDistance *= 0.7; // Reduced even further to prevent clustering
+                        }
+                        
+                        // Draw connections with dynamic distance
+                        if (distance < dynamicConnectionDistance) {
+                            // Base opacity on distance - closer = more opaque
+                            let opacity = 0.2 * (1 - distance / dynamicConnectionDistance);
+                            
+                            // Increase brightness if near mouse
+                            if (isNearMouse) {
+                                opacity = Math.min(opacity * 2.5, 0.8); // Brighter but capped
+                            }
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+                            ctx.lineWidth = isNearMouse ? 0.8 : 0.5; // Thinner lines when not near mouse
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            // Animation loop
+            function animate() {
+                // Clear canvas with full black (no alpha for performance)
+                ctx.fillStyle = '#0a0a0a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Update global drift phases very slowly
+                globalPhaseX += 0.0005;
+                globalPhaseY += 0.0004;
+                
+                // Update each node and reset if needed
+                nodes.forEach(node => {
+                    node.update();
+                    
+                    // Reset node if it moved out of bounds
+                    if (node.isOutOfBounds) {
+                        node.reset();
+                    }
+                });
+                
+                // Draw connections first (behind nodes)
+                drawConnections();
+                
+                // Draw nodes on top
+                nodes.forEach(node => {
+                    node.draw();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            // Animation sequence - one-time pulse without changing position
+            setTimeout(() => {
+                // The cube already has its one-time animation applied earlier
+                // So we don't need to trigger any pulse animation here anymore
+            }, 1500);
+            
+            // Remove the positioned transform for the logo text
+            // Logo text will flow naturally with the 20px margin from the cube
+            
+            setTimeout(() => {
+                document.getElementById('logoText').style.opacity = '1';
+                document.getElementById('logoText').style.transition = 'opacity 1s ease';
+            }, 2000);
+            
+            // Create the subtext with proper spacing and justified alignment
+            const logoText = document.getElementById('logoText');
+            const subtextContainer = document.createElement('div');
+            subtextContainer.className = 'subtext-container';
+            
+            // Insert text with non-breaking space manually
+            subtextContainer.innerHTML = '<div style="display: flex; justify-content: space-between; width: 100%;">' +
+                '<span style="white-space: nowrap;">NEXT-GEN</span>' +
+                '<span>&nbsp;BESPOKE</span>' +
+                '<span>&nbsp;FABRICATION</span>' +
+                '<span id="services-text">&nbsp;SERVICES</span>' +
+            '</div>';
+            
+            logoText.appendChild(subtextContainer);
+            
+            // Loading bar animation - align with logo text
+            setTimeout(() => {
+                const loadingBar = document.getElementById('loadingBar');
+                const logoTextWidth = logoText.offsetWidth;
+                
+                // Animate the loading bar
+                let progress = 0;
+                const loadingInterval = setInterval(() => {
+                    progress += 1;
+                    const progressWidth = (progress / 100) * logoTextWidth;
+                    loadingBar.style.width = progressWidth + 'px';
+                    
+                    if (progress >= 100) {
+                        clearInterval(loadingInterval);
+                        // Don't fade out the loading bar - keep it visible
+                        
+                        // Show social icons with staggered animation
+                        const icons = document.querySelectorAll('.social-icon');
+                        icons.forEach((icon, index) => {
+                            setTimeout(() => {
+                                icon.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                            }, index * 100);
+                        });
+                        
+                        setTimeout(() => {
+                            document.getElementById('socialIcons').style.opacity = '1';
+                            document.getElementById('socialIcons').style.transition = 'opacity 1s ease';
+                        }, 500);
+                    }
+                }, 30);
+            }, 2500); // Start loading animation after logo text fades in
+        });
+    </script>
+</body>
+</html>
