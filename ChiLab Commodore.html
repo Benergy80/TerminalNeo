@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben Stagl | ChiLab Studio</title>
+    <style>
+        @font-face {
+            font-family: 'PET';
+            src: url('https://cdn.glitch.global/a6d21dd2-f698-46a9-91e6-ac5bf33ceb59/commodore-pet.ttf?v=1639436572632') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        :root {
+            --pet-green: #64fe2e;
+            --pet-bg: #002000;
+            --crt-overlay: rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'PET', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .crt-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .crt-screen::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--crt-overlay),
+                var(--crt-overlay) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+        }
+        
+        .terminal-container {
+            position: relative;
+            width: 85%;
+            max-width: 800px;
+            height: 70vh;
+            background: var(--pet-bg);
+            overflow: hidden;
+            border: 16px solid #111;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8),
+                        inset 0 0 5px rgba(100, 254, 46, 0.3);
+            z-index: 1;
+        }
+        
+        .terminal-header {
+            background: var(--pet-bg);
+            padding: 8px;
+            text-align: center;
+            color: var(--pet-green);
+            border-bottom: 2px solid var(--pet-green);
+        }
+        
+        .terminal-body {
+            padding: 12px;
+            height: calc(100% - 36px);
+            overflow-y: auto;
+            color: var(--pet-green);
+            line-height: 1.3;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+        
+        .typing-text {
+            white-space: pre-wrap;
+        }
+        
+        .command-line {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .prompt {
+            color: var(--pet-green);
+            margin-right: 8px;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 16px;
+            background: var(--pet-green);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .command-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: var(--pet-green);
+            font-family: 'PET', monospace;
+            font-size: 1.2rem;
+            outline: none;
+            caret-color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .skill-bar {
+            margin: 8px 0;
+        }
+        
+        .skill-name {
+            display: inline-block;
+            width: 190px;
+            color: var(--pet-green);
+        }
+        
+        .skill-level {
+            display: inline-block;
+            color: var(--pet-green);
+        }
+        
+        .contact-item {
+            margin: 8px 0;
+        }
+        
+        .contact-item a {
+            color: var(--pet-green);
+            text-decoration: none;
+        }
+        
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Commodore PET loading pattern */
+        .loading-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--pet-bg);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--pet-green);
+            font-size: 1.5rem;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+        
+        .loading-animation.done {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="crt-screen"></div>
+    
+    <div class="terminal-container">
+        <div class="loading-animation" id="loading-screen">
+            <div id="loading-text">
+                COMMODORE BASIC 4.0<br>
+                <br>
+                READY.<br>
+                <br>
+                LOAD "CHILAB.PROFILE"<br>
+                <br>
+                PRESS PLAY ON TAPE 1<br>
+                <br>
+                OK<br>
+                SEARCHING<br>
+                FOUND CHILAB STUDIO PROFILE<br>
+                LOADING<br>
+                <br>
+                10 REM CHILAB STUDIO PROFILE PROGRAM<br> 
+                20 PRINT "INITIALIZING SYSTEM..."<br> 
+                30 FOR C=C+1 TO 100: CORRECT D<br>
+                <br>
+                READY.<br>
+                <br>
+                RUN<br>
+            </div>
+        </div>
+        
+        <div class="terminal-header">
+            **** CHILAB STUDIO PROFILE ****
+        </div>
+        
+        <div class="terminal-body" id="terminal-body">
+            <div id="typing-text" class="typing-text"></div>
+            <div id="command-line" class="command-line hidden">
+                <span class="prompt">READY.</span>
+                <input type="text" class="command-input" id="command-input" autocomplete="off">
+                <span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Loading animation
+        const loadingScreen = document.getElementById('loading-screen');
+        
+        setTimeout(() => {
+            loadingScreen.classList.add('done');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                typeNextCharacter();
+            }, 1000);
+        }, 6000);
+        
+        // Terminal typing effect
+        const terminalText = document.getElementById('typing-text');
+        const commandLine = document.getElementById('command-line');
+        const commandInput = document.getElementById('command-input');
+        
+        const messages = [
+            { text: "CHILAB STUDIO PROFILE PROGRAM", delay: 50 },
+            { text: "\n\n", delay: 100 },
+            { text: "*********************************", delay: 30 },
+            { text: "\n* FOUNDER PROFILE              *", delay: 30 },
+            { text: "\n*********************************", delay: 30 },
+            { text: "\n", delay: 100 },
+            { text: "NAME: BEN STAGL", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "TITLE: FOUNDER & CO-DIRECTOR, CHILAB STUDIO LLC", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "LOCATION: CHICAGO, IL", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "STATUS: ACTIVE", delay: 50 },
+            { text: "\n\n", delay: 100 },
+            { text: "*********************************", delay: 30 },
+            { text: "\n* EXPERTISE MATRIX             *", delay: 30 },
+            { text: "\n*********************************", delay: 30 },
+            { text: "\n", delay: 100 },
+            { text: "SCULPTURE & FABRICATION: ▒▒▒▒▒▒▒▒▒▒ 98%", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "METAL FINISHING & PATINA: ▒▒▒▒▒▒▒▒▒▒ 95%", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "ARCHITECTURAL DESIGN: ▒▒▒▒▒▒▒▒▒  88%", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "3D MODELING: ▒▒▒▒▒▒▒▒   86%", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "MATERIAL INNOVATION: ▒▒▒▒▒▒▒▒▒  92%", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "PROJECT MANAGEMENT: ▒▒▒▒▒▒▒▒▒  90%", delay: 50 },
+            { text: "\n\n", delay: 100 },
+            { text: "*********************************", delay: 30 },
+            { text: "\n* CAREER TIMELINE              *", delay: 30 },
+            { text: "\n*********************************", delay: 30 },
+            { text: "\n", delay: 100 },
+            { text: "[2013-PRESENT] FOUNDER & CO-DIRECTOR, CHILAB STUDIO", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "[2011] MFA IN SCULPTURE - SCHOOL OF THE ART INSTITUTE OF CHICAGO", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "[2003-2009] ARTIST & METALWORKER - PORTLAND, OREGON", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "[2003] BFA IN SCULPTURE - OREGON STATE UNIVERSITY", delay: 50 },
+            { text: "\n\n", delay: 100 },
+            { text: "*********************************", delay: 30 },
+            { text: "\n* NOTABLE PROJECTS             *", delay: 30 },
+            { text: "\n*********************************", delay: 30 },
+            { text: "\n", delay: 100 },
+            { text: "GRAND STAIRCASE AT UBER FREIGHT - CHICAGO", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "450-FOOT ARTWORK FOR TERMINAL 5 AT O'HARE AIRPORT", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "ST. NICHOLAS CHURCH AND NATIONAL SHRINE - 9/11 MEMORIAL", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "KNOLL SHOWROOM MARQUEE - WEST LOOP, CHICAGO", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "THE UNFOLDING CHAIR - BRONZE FURNITURE SCULPTURE", delay: 50 },
+            { text: "\n", delay: 50 },
+            { text: "FLIGHT OF BUTTERFLIES - PUBLIC ART INSTALLATION", delay: 50 },
+            { text: "\n\n", delay: 100 },
+            { text: "990 PRINT \"TYPE 'HELP' AND PRESS RETURN FOR COMMANDS\"", delay: 50 },
+            { text: "\n999 END", delay: 50 },
+            { text: "\n\n", delay: 100 },
+            { text: "RUN COMPLETE.", delay: 50 },
+            { text: "\n\n", delay: 100 },
+        ];
+        
+        let currentMessageIndex = 0;
+        let currentCharIndex = 0;
+        let isTyping = true;
+        
+        function typeNextCharacter() {
+            if (currentMessageIndex >= messages.length) {
+                isTyping = false;
+                commandLine.classList.remove('hidden');
+                commandInput.focus();
+                return;
+            }
+            
+            const currentMessage = messages[currentMessageIndex];
+            const textToType = currentMessage.text;
+            
+            if (currentCharIndex < textToType.length) {
+                const char = textToType.charAt(currentCharIndex);
+                terminalText.textContent += char;
+                currentCharIndex++;
+                
+                setTimeout(typeNextCharacter, currentMessage.delay);
+            } else {
+                currentMessageIndex++;
+                currentCharIndex = 0;
+                setTimeout(typeNextCharacter, 100);
+            }
+        }
+        
+        function processCommand(command) {
+            terminalText.textContent += "\n\n";
+            
+            command = command.toUpperCase().trim();
+            
+            if (command === 'HELP' || command === 'HELP()' || command === '?') {
+                terminalText.textContent += `AVAILABLE COMMANDS:
+                
+ABOUT      - SHOW DETAILED PROFILE
+SKILLS     - LIST TECHNICAL EXPERTISE
+PROJECTS   - SHOW NOTABLE PROJECTS
+PHILOSOPHY - DESIGN PHILOSOPHY
+CONTACT    - SHOW CONTACT INFORMATION
+CLS        - CLEAR THE SCREEN
+LIST       - LIST THIS PROGRAM
+`;
+            } 
+            else if (command === 'ABOUT') {
+                terminalText.textContent += `
+*********************************
+* BEN STAGL PROFILE             *
+*********************************
+
+BEN STAGL IS THE FOUNDER AND CO-DIRECTOR 
+ALONG WITH PARTNER ALLY REZA AT 
+CHILAB STUDIO LLC, A CHICAGO-BASED ATELIER
+SPECIALIZING IN CUSTOM PROJECTS THAT BLEND 
+FINE ART, ARCHITECTURE, AND INTERIOR DESIGN.
+
+WITH EXPERTISE IN:
+- SCULPTURE AND ARCHITECTURAL FORM
+- METAL FABRICATION AND FINE FINISHING
+- 3D MODELING / DIGITAL FABRICATION
+- MATERIAL EXPLORATION AND INNOVATION
+
+BEN ORIGINALLY FOUNDED CHILAB IN 2013, 
+BRINGING HIS BACKGROUND IN SCULPTURE,
+METAL WORK, AND PATINA ARTISTRY TO CREATE A
+DESIGN AND FABRICATION STUDIO THAT BRIDGES
+TRADITIONAL CRAFTSMANSHIP WITH CUTTING-EDGE
+TECHNOLOGY.
+`;
+            } 
+            else if (command === 'SKILLS') {
+                terminalText.textContent += `
+*********************************
+* TECHNICAL EXPERTISE           *
+*********************************
+
+SCULPTURE & FABRICATION:  ▒▒▒▒▒▒▒▒▒▒ 98%
+METAL FINISHING & PATINA: ▒▒▒▒▒▒▒▒▒▒ 95%
+ARCHITECTURAL DESIGN:     ▒▒▒▒▒▒▒▒▒  88%
+3D MODELING:              ▒▒▒▒▒▒▒▒   86%
+MATERIAL INNOVATION:      ▒▒▒▒▒▒▒▒▒  92%
+PROJECT MANAGEMENT:       ▒▒▒▒▒▒▒▒▒  90%
+`;
+            } 
+            else if (command === 'PROJECTS') {
+                terminalText.textContent += `
+*********************************
+* NOTABLE PROJECTS              *
+*********************************
+
+GRAND STAIRCASE AT UBER FREIGHT
+A SWEEPING ARCHITECTURAL CENTERPIECE COMBINING
+STEEL AND RECLAIMED WOOD.
+
+ST. NICHOLAS CHURCH AT 9/11 MEMORIAL
+CUSTOM GLASS CROSSES AND BRONZE PEDESTALS FOR
+THIS SANTIAGO CALATRAVA-DESIGNED LANDMARK.
+
+KNOLL SHOWROOM MARQUEE
+CHROME AND BRONZE ARCHITECTURAL SCULPTURE
+SPANNING MULTIPLE FLOORS.
+
+A MURMURATION - O'HARE AIRPORT
+450-FOOT PERMANENT ART INSTALLATION FEATURING
+NEARLY 600 ALUMINUM DISCS.
+
+THE UNFOLDING CHAIR
+SIGNATURE BRONZE FURNITURE PIECE MERGING
+SCULPTURAL DESIGN WITH FUNCTIONALITY.
+
+FLIGHT OF BUTTERFLIES
+PUBLIC ART INSTALLATION FEATURING 29 ALUMINUM
+BUTTERFLY SCULPTURES THROUGHOUT CHICAGO.
+`;
+            }
+            else if (command === 'PHILOSOPHY') {
+                terminalText.textContent += `
+*********************************
+* DESIGN PHILOSOPHY             *
+*********************************
+
+"DESIGN IS INTENTION MADE MANIFEST. IT IS THE
+PHYSICAL AND VISUAL EXPRESSION OF PURPOSE,
+THOUGHT, AND INTENT. WHETHER THROUGH FORM,
+FUNCTION, OR AESTHETIC, DESIGN IS THE TANGIBLE
+OUTCOME OF THOUGHTFUL INTENT. A GOOD DESIGN
+COMMUNICATES CLEARLY AND CREATES THE EXPERIENCE
+THAT IS INTENDED."
+
+"I'VE ALWAYS WANTED TO PARTICIPATE IN THE URBAN
+LANDSCAPE. I BEGAN SEEING WHERE DESIGN WAS BEING
+USED THROUGHOUT THE CITY AND FELL IN LOVE WITH
+ALL OF THE BEAUTIFUL CHARACTERISTICS OF URBAN
+SPACE."
+
+"I FEEL LIKE THERE IS A SPECIAL ENERGY THAT IS
+PUT INTO THE PIECES THAT WE CREATE BECAUSE WE
+REALLY LOVE AND CARE ABOUT MAKING THINGS THAT
+LAST LIFETIMES."
+`;
+            }
+            else if (command === 'CONTACT') {
+                terminalText.textContent += `
+*********************************
+* CONTACT CHANNELS              *
+*********************************
+
+WEBSITE:      CHILABSTUDIO.COM
+PERSONAL:     BENSTAGL.COM
+INSTAGRAM:    @CHILABSTUDIO
+LOCATION:     CHICAGO, ILLINOIS
+`;
+            }
+            else if (command === 'CLS' || command === 'CLEAR') {
+                terminalText.textContent = '';
+                return;
+            }
+            else if (command === 'LIST') {
+                terminalText.textContent += `
+10 REM CHILAB STUDIO PROFILE PROGRAM
+20 PRINT "INITIALIZING SYSTEM..."
+30 FOR C=1 TO 10TO 100: CORRECT D
+40 PRINT CHR$(147)
+50 GOSUB 1000: REM DISPLAY HEADER
+60 GOSUB 2000: REM FOUNDER PROFILE
+70 GOSUB 3000: REM EXPERTISE MATRIX
+80 GOSUB 4000: REM CAREER TIMELINE
+90 GOSUB 5000: REM NOTABLE PROJECTS
+100 GOSUB 6000: REM COMMAND INFO
+110 END
+...
+990 PRINT "TYPE 'HELP' AND PRESS RETURN FOR COMMANDS"
+999 END
+`;
+            }
+            else {
+                terminalText.textContent += `
+?SYNTAX ERROR IN ${command}
+TYPE 'HELP' FOR AVAILABLE COMMANDS
+`;
+            }
+            
+            terminalText.textContent += "\nREADY.\n";
+            commandInput.value = '';
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+            }, 0);
+        }
+        
+        commandInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const command = this.value;
+                
+                if (command.trim() !== '') {
+                    processCommand(command);
+                }
+            }
+        });
+        
+        const terminalBody = document.getElementById('terminal-body');
+    </script>
+</body>
+</html>
