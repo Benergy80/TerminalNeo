@@ -287,6 +287,15 @@
                 transform: translateY(0);
             }
         }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            /* Ensure Instagram icon stays circular throughout animation */
+            .fa-instagram {
+                border-radius: 50% !important;
+                overflow: hidden;
+            }
+        }
     </style>
 </head>
 <body>
