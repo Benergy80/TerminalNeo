@@ -189,6 +189,11 @@
             background: rgba(193, 53, 132, 0.2);
             padding: 15px;
             border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         /* Facebook Animation */
@@ -290,10 +295,29 @@
         
         /* Mobile-specific adjustments */
         @media (max-width: 768px) {
-            /* Ensure Instagram icon stays circular throughout animation */
-            .fa-instagram {
+            /* Comprehensive fix for Instagram icon on mobile */
+            .fa-instagram, 
+            .social-icon:nth-child(2) {
                 border-radius: 50% !important;
-                overflow: hidden;
+                overflow: hidden !important;
+                transform-style: preserve-3d !important;
+                backface-visibility: hidden !important;
+                box-sizing: border-box !important;
+                -webkit-backface-visibility: hidden !important;
+            }
+            
+            /* Ensure the animation doesn't break the circular shape */
+            @keyframes pulseInstagram {
+                0% { 
+                    border-radius: 50%;
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(193, 53, 132, 0.7);
+                }
+                100% { 
+                    border-radius: 50%;
+                    transform: scale(1.1);
+                    box-shadow: 0 0 0 10px rgba(193, 53, 132, 0);
+                }
             }
         }
     </style>
