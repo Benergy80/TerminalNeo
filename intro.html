@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CHILAB&MAXCNC Intro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -287,6 +287,48 @@
                 transform: translateY(0);
             }
         }
+        
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 2rem;
+                letter-spacing: 0.3rem;
+            }
+            
+            .social-icons {
+                gap: 15px;
+            }
+            
+            .social-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* Smaller screens */
+        @media (max-width: 480px) {
+            .cube {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .logo-text {
+                font-size: 1.5rem;
+                letter-spacing: 0.2rem;
+            }
+            
+            .social-icons {
+                gap: 12px;
+            }
+            
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -349,6 +391,23 @@
             window.addEventListener('mousemove', (e) => {
                 mouseX = e.clientX;
                 mouseY = e.clientY;
+            });
+            
+            // Add touch support for mobile devices
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    const touch = e.touches[0];
+                    mouseX = touch.clientX;
+                    mouseY = touch.clientY;
+                }
+            });
+            
+            window.addEventListener('touchstart', (e) => {
+                if (e.touches.length > 0) {
+                    const touch = e.touches[0];
+                    mouseX = touch.clientX;
+                    mouseY = touch.clientY;
+                }
             });
             
             // Global drift variables
@@ -536,8 +595,12 @@
             }
             
             const nodes = [];
-            const nodeCount = 80; // Number of nodes for good performance
-            const connectionDistance = 150; // Base distance threshold for connecting nodes
+            const isMobile = window.innerWidth <= 768;
+            const isSmallMobile = window.innerWidth <= 480;
+            
+            // Adjust node count based on device
+            const nodeCount = isSmallMobile ? 40 : (isMobile ? 60 : 80);
+            const connectionDistance = isSmallMobile ? 120 : (isMobile ? 130 : 150);
             
             // Initialize nodes in a grid-like pattern with some randomness
             function initializeNodes() {
