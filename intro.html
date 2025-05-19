@@ -287,48 +287,6 @@
                 transform: translateY(0);
             }
         }
-        
-        /* Responsive adjustments for mobile */
-        @media (max-width: 768px) {
-            .logo-text {
-                font-size: 2rem;
-                letter-spacing: 0.3rem;
-            }
-            
-            .social-icons {
-                gap: 15px;
-            }
-            
-            .social-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
-            }
-        }
-        
-        /* Smaller screens */
-        @media (max-width: 480px) {
-            .cube {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .logo-text {
-                font-size: 1.5rem;
-                letter-spacing: 0.2rem;
-            }
-            
-            .social-icons {
-                gap: 12px;
-            }
-            
-            .social-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-                padding: 10px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -598,8 +556,8 @@
             const isMobile = window.innerWidth <= 768;
             const isSmallMobile = window.innerWidth <= 480;
             
-            // Adjust node count based on device
-            const nodeCount = isSmallMobile ? 40 : (isMobile ? 60 : 80);
+            // Adjust node count based on device - reduce to 20 on mobile
+            const nodeCount = isSmallMobile ? 20 : (isMobile ? 20 : 80);
             const connectionDistance = isSmallMobile ? 120 : (isMobile ? 130 : 150);
             
             // Initialize nodes in a grid-like pattern with some randomness
