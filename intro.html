@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHILAB&MAXCNC Intro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -351,23 +351,6 @@
                 mouseY = e.clientY;
             });
             
-            // Add touch support for mobile devices
-            window.addEventListener('touchmove', (e) => {
-                if (e.touches.length > 0) {
-                    const touch = e.touches[0];
-                    mouseX = touch.clientX;
-                    mouseY = touch.clientY;
-                }
-            });
-            
-            window.addEventListener('touchstart', (e) => {
-                if (e.touches.length > 0) {
-                    const touch = e.touches[0];
-                    mouseX = touch.clientX;
-                    mouseY = touch.clientY;
-                }
-            });
-            
             // Global drift variables
             let globalPhaseX = 0;
             let globalPhaseY = 0;
@@ -553,12 +536,8 @@
             }
             
             const nodes = [];
-            const isMobile = window.innerWidth <= 768;
-            const isSmallMobile = window.innerWidth <= 480;
-            
-            // Adjust node count based on device - reduce to 20 on mobile
-            const nodeCount = isSmallMobile ? 20 : (isMobile ? 20 : 80);
-            const connectionDistance = isSmallMobile ? 120 : (isMobile ? 130 : 150);
+            const nodeCount = 80; // Number of nodes for good performance
+            const connectionDistance = 150; // Base distance threshold for connecting nodes
             
             // Initialize nodes in a grid-like pattern with some randomness
             function initializeNodes() {
