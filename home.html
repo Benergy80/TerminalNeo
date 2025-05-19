@@ -214,6 +214,27 @@
                 padding-left: 1rem !important;
                 padding-right: 1rem !important;
             }
+            
+            /* Material buttons optimization for mobile */
+            .material-buttons-container {
+                flex-wrap: wrap !important;
+                gap: 0.5rem !important;
+                justify-content: center !important;
+            }
+            
+            .material-button {
+                font-size: 0.75rem !important;
+                padding: 0.35rem 0.75rem !important;
+                white-space: nowrap !important;
+            }
+            
+            /* Fallback for 3D on mobile */
+            .mobile-fallback-bg {
+                display: block !important;
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(135deg, rgba(101, 204, 243, 0.05), rgba(255, 255, 255, 0.1));
+            }
         }
         
         .scroll-down {
@@ -712,15 +733,15 @@
 <div class="text-center p-8 max-w-2xl">
 <h3 class="text-3xl md:text-4xl font-bold mb-4 gradient-text studio-font">Our Repertoire</h3>
 <p class="text-gray-300 mb-6">Utilizing a range of innovative technologies to create extraordinary objects and experiences for our clients.</p>
-<div class="flex justify-center gap-4">
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Steel</button>
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Bronze</button>
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Aluminum</button>
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Wood</button>
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Plastics</button>
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Glass</button>
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Composites</button>
-<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30">Resins</button>
+<div class="flex flex-wrap justify-center gap-2 material-buttons-container">
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Steel</button>
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Bronze</button>
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Aluminum</button>
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Wood</button>
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Plastics</button>
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Glass</button>
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Composites</button>
+<button class="px-6 py-2 rounded-full text-sm font-medium bg-blue-500/20 border border-blue-400/50 hover:bg-blue-500/30 material-button">Resins</button>
 </div>
 </div>
 </div>
@@ -1985,8 +2006,48 @@
                     }
                 });
                 
-                // Trigger an initial resize event to set proper canvas sizes
-                window.dispatchEvent(new Event('resize'));
+                // Initial setup - add fallback for mobile
+                window.addEventListener('DOMContentLoaded', function() {
+                    // Trigger window resize to properly size canvases
+                    setTimeout(function() {
+                        window.dispatchEvent(new Event('resize'));
+                        
+                        // On mobile, add an additional timeout to render scenes
+                        if (isMobile) {
+                            setTimeout(function() {
+                                try {
+                                    // Re-render all scenes
+                                    if (bronzeTorusRenderer && bronzeTorusScene && bronzeTorusCamera) {
+                                        bronzeTorusRenderer.render(bronzeTorusScene, bronzeTorusCamera);
+                                    }
+                                    if (spiralGroup && uberRenderer && uberScene && uberCamera) {
+                                        uberRenderer.render(uberScene, uberCamera);
+                                    }
+                                    if (stNicholasRenderer && stNicholasScene && stNicholasCamera) {
+                                        stNicholasRenderer.render(stNicholasScene, stNicholasCamera);
+                                    }
+                                    if (knollRenderer && knollScene && knollCamera) {
+                                        knollRenderer.render(knollScene, knollCamera);
+                                    }
+                                    if (materialVizRenderer && materialVizScene && materialVizCamera) {
+                                        materialVizRenderer.render(materialVizScene, materialVizCamera);
+                                    }
+                                    if (butterflyGroup && studioRenderer && studioScene && studioCamera) {
+                                        studioRenderer.render(studioScene, studioCamera);
+                                    }
+                                    if (contactRenderer && contactScene && contactCamera) {
+                                        contactRenderer.render(contactScene, contactCamera);
+                                    }
+                                    if (footerMaterialRenderer && footerMaterialScene && footerMaterialCamera) {
+                                        footerMaterialRenderer.render(footerMaterialScene, footerMaterialCamera);
+                                    }
+                                } catch (error) {
+                                    console.log('Error in mobile setup:', error);
+                                }
+                            }, 1000); // Extra delay for mobile devices
+                        }
+                    }, 100);
+                });
                 
             } catch (error) {
                 console.log('Error initializing 3D elements:', error);
