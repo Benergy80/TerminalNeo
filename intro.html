@@ -536,7 +536,10 @@
             }
             
             const nodes = [];
-            const nodeCount = 80; // Number of nodes for good performance
+            // Check if device is mobile to reduce particles
+            const isMobile = window.innerWidth <= 768;
+            // Use only 20 nodes on mobile for better performance
+            const nodeCount = isMobile ? 20 : 80;
             const connectionDistance = 150; // Base distance threshold for connecting nodes
             
             // Initialize nodes in a grid-like pattern with some randomness
